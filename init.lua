@@ -164,7 +164,7 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+vim.keymap.set('n', '<leader>k', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -213,16 +213,16 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-vim.filetype.add({
+vim.filetype.add {
   pattern = {
-    [".*%.component%.html"] = "angular.html", -- Sets the filetype to `angular.html` if it matches the pattern
+    ['.*%.component%.html'] = 'angular.html', -- Sets the filetype to `angular.html` if it matches the pattern
   },
-})
+}
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "angular.html",
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'angular.html',
   callback = function()
-    vim.treesitter.language.register("angular", "angular.html") -- Register the filetype with treesitter for the `angular` language/parser
+    vim.treesitter.language.register('angular', 'angular.html') -- Register the filetype with treesitter for the `angular` language/parser
   end,
 })
 -- [[ Configure and install plugins ]]
@@ -239,12 +239,12 @@ vim.api.nvim_create_autocmd("FileType", {
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  
---   {
---   "pmizio/typescript-tools.nvim",
---   dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
---   opts = {},
--- },
+
+  --   {
+  --   "pmizio/typescript-tools.nvim",
+  --   dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  --   opts = {},
+  -- },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -582,7 +582,7 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local util = require('lspconfig.util')
+      local util = require 'lspconfig.util'
       local servers = {
         -- clangd = {},
         -- gopls = {},
@@ -595,14 +595,23 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (``) will work just fine
         angularls = {
-          filetypes={'typescript', 'html', 'typescriptreact', 'typescript.tsx', 'angular.html'},
-          root_dir= util.root_pattern('angular.json', 'project.json'),
-          cmd = { 'ngserver', '--stdio', '--tsProbeLocations', '/usr/local/lib/node_modules/typescript/lib', '--ngProbeLocations', '/usr/local/lib/node_modules/@angular/language-server/bin', '--forceStrictTemplates' },
+          filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx', 'angular.html' },
+          root_dir = util.root_pattern('angular.json', 'project.json'),
+          cmd = {
+            'ngserver',
+            '--stdio',
+            '--tsProbeLocations',
+            '/usr/local/lib/node_modules/typescript/lib',
+            '--ngProbeLocations',
+            '/usr/local/lib/node_modules/@angular/language-server/bin',
+            '--forceStrictTemplates',
+          },
         },
         tsserver = {},
         --
         tailwindcss = {
-          custom_filetypes = { 'angular', 'angular.html'}
+          custom_filetypes = { 'angular', 'angular.html' },
+          root_dir = util.root_pattern('tailwind.config.js', '.git'),
         },
 
         lua_ls = {
@@ -634,7 +643,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code,
-		'tsserver'
+        'tsserver',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -685,8 +694,8 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
-         angular = { {  "prettier" } },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        angular = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -832,17 +841,17 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [']quote
       --  - ci'  - [C]hange [I]nside [']quote)
-      local spec_treesitter = require('mini.ai').gen_spec.treesitter
+      --   local spec_treesitter = require('mini.ai').gen_spec.treesitter
 
-      require('mini.ai').setup ({ n_lines = 500,
-      custom_textobjects = {
-        f = spec_treesitter({ a = '@function.outer', i = '@function.inner' }),
-        o = spec_treesitter({
-          a = { '@conditional.outer', '@loop.outer' },
-          i = { '@conditional.inner', '@loop.inner' },
-        })
-      } 
-    })
+      --   require('mini.ai').setup ({ n_lines = 500,
+      --   custom_textobjects = {
+      --     f = spec_treesitter({ a = '@function.outer', i = '@function.inner' }),
+      --     o = spec_treesitter({
+      --       a = { '@conditional.outer', '@loop.outer' },
+      --       i = { '@conditional.inner', '@loop.inner' },
+      --     })
+      --   }
+      -- })
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -870,11 +879,10 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+  'nvim-treesitter/nvim-treesitter-textobjects',
 
-  
-'nvim-treesitter/nvim-treesitter-textobjects',
   { -- Highlight, edit, and navigate code
-  "dlvandenberg/tree-sitter-angular",
+    'dlvandenberg/tree-sitter-angular',
     'nvim-treesitter/nvim-treesitter',
 
     build = ':TSUpdate',
@@ -890,7 +898,135 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
-      
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<c-space>',
+          node_incremental = '<c-space>',
+          scope_incremental = '<c-s>',
+          node_decremental = '<c-backspace>',
+        },
+      },
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+          keymaps = {
+            -- You can use the capture groups defined in textobjects.scm
+            ['aa'] = '@parameter.outer',
+            ['ia'] = '@parameter.inner',
+            ['af'] = '@function.outer',
+            ['if'] = '@function.inner',
+            ['ac'] = '@class.outer',
+            ['ic'] = '@class.inner',
+            ['ii'] = '@conditional.inner',
+            ['ai'] = '@conditional.outer',
+            ['il'] = '@loop.inner',
+            ['al'] = '@loop.outer',
+            ['at'] = '@comment.outer',
+          },
+        },
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            [']f'] = { query = '@call.outer', desc = 'Next function call start' },
+            [']a'] = { query = '@parameter.inner', desc = 'Next parameter call start' },
+            [']m'] = { query = '@function.outer', desc = 'Next method/function def start' },
+            [']p'] = { query = '@class.outer', desc = 'Next class start' },
+            [']i'] = { query = '@conditional.outer', desc = 'Next conditional start' },
+            [']l'] = { query = '@loop.outer', desc = 'Next loop start' },
+            [']n'] = { query = '@number.inner', desc = 'Next attribute start' },
+            [']t'] = { query = '@comment.outer', desc = 'Next comment start' },
+
+            -- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
+            -- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
+            [']s'] = { query = '@scope', query_group = 'locals', desc = 'Next scope' },
+            [']z'] = { query = '@fold', query_group = 'folds', desc = 'Next fold' },
+          },
+          goto_next_end = {
+            [']F'] = { query = '@call.outer', desc = 'Next function call end' },
+            [']M'] = { query = '@function.outer', desc = 'Next method/function def end' },
+            [']C'] = { query = '@class.outer', desc = 'Next class end' },
+            [']I'] = { query = '@conditional.outer', desc = 'Next conditional end' },
+            [']L'] = { query = '@loop.outer', desc = 'Next loop end' },
+          },
+          goto_previous_start = {
+            ['[f'] = { query = '@call.outer', desc = 'Prev function call start' },
+            ['[a'] = { query = '@parameter.inner', desc = 'Prev function call start' },
+            ['[m'] = { query = '@function.outer', desc = 'Prev method/function def start' },
+            ['[p'] = { query = '@class.outer', desc = 'Prev class start' },
+            ['[i'] = { query = '@conditional.outer', desc = 'Prev conditional start' },
+            ['[l'] = { query = '@loop.outer', desc = 'Prev loop start' },
+          },
+          goto_previous_end = {
+            ['[F'] = { query = '@call.outer', desc = 'Prev function call end' },
+            ['[M'] = { query = '@function.outer', desc = 'Prev method/function def end' },
+            ['[C'] = { query = '@class.outer', desc = 'Prev class end' },
+            ['[I'] = { query = '@conditional.outer', desc = 'Prev conditional end' },
+            ['[L'] = { query = '@loop.outer', desc = 'Prev loop end' },
+          },
+        },
+
+        swap = {
+          enable = true,
+          swap_next = {
+            -- ['<leader>a'] = '@parameter.inner',
+          },
+          swap_previous = {
+            ['<leader>A'] = '@parameter.inner',
+          },
+        },
+      },
+
+      -- textobjects = {
+      --   select = {
+      --     enable = true,
+      --     lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+      --     keymaps = {
+      --       -- You can use the capture groups defined in textobjects.scm
+      --       ['aa'] = '@parameter.outer',
+      --       ['ia'] = '@parameter.inner',
+      --       ['af'] = '@function.outer',
+      --       ['if'] = '@function.inner',
+      --       ['ac'] = '@class.outer',
+      --       ['ic'] = '@class.inner',
+      --       ['ii'] = '@conditional.inner',
+      --       ['ai'] = '@conditional.outer',
+      --       ['il'] = '@loop.inner',
+      --       ['al'] = '@loop.outer',
+      --     },
+      --   },
+      --   move = {
+      --     enable = true,
+      --     set_jumps = true, -- whether to set jumps in the jumplist
+      --     goto_next_start = {
+      --       [']f'] = '@function.outer',
+      --       [']]'] = '@class.outer',
+      --     },
+      --     goto_next_end = {
+      --       [']F'] = '@function.outer',
+      --       [']['] = '@class.outer',
+      --     },
+      --     goto_previous_start = {
+      --       ['[f'] = '@function.outer',
+      --       ['[['] = '@class.outer',
+      --     },
+      --     goto_previous_end = {
+      --       ['[F'] = '@function.outer',
+      --       ['[]'] = '@class.outer',
+      --     },
+      --   },
+      --   swap = {
+      --     enable = true,
+      --     swap_next = {
+      --       ['<leader>a'] = '@parameter.inner',
+      --     },
+      --     swap_previous = {
+      --       ['<leader>A'] = '@parameter.inner',
+      --     },
+      --   },
+      -- },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -899,7 +1035,6 @@ require('lazy').setup({
       require('nvim-treesitter.install').prefer_git = true
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup(opts)
-
 
       vim.treesitter.language.register('.cy.ts', 'typescript')
       -- vim.treesitter.language.register('.html', 'html')
