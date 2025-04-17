@@ -827,13 +827,6 @@ require('lazy').setup({
 
       require('mini.ai').setup {
         n_lines = 500,
-        custom_textobjects = {
-          f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
-          o = spec_treesitter {
-            a = { '@conditional.outer', '@loop.outer' },
-            i = { '@conditional.inner', '@loop.inner' },
-          },
-        },
       }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
