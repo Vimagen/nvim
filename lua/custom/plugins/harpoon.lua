@@ -4,7 +4,19 @@ return {
   config = function()
     local harpoon = require 'harpoon'
     ---@diagnostic disable-next-line: missing-parameter
-    harpoon:setup()
+    harpoon:setup {
+      settings = {
+        key = function()
+          local pipe = io.popen 'git branch --show-current'
+          if pipe then
+            local c = pipe:read('*l'):match '^%s*(.-)%s*$'
+            pipe:close()
+            return c
+          end
+          return nil
+        end,
+      },
+    }
     local function map(lhs, rhs, opts)
       vim.keymap.set('n', lhs, rhs, opts or {})
     end
